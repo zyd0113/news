@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutternews/common/api/user.dart';
+import 'package:flutternews/common/entity/entitys.dart';
 import 'package:flutternews/common/utils/screen.dart';
+import 'package:flutternews/common/utils/security.dart';
 import 'package:flutternews/common/utils/utils.dart';
 import 'package:flutternews/common/values/values.dart';
 import 'package:flutternews/common/widgets/widgets.dart';
@@ -15,7 +18,7 @@ class _SignInPageState extends State<SignInPage> {
   //密码的控制器
   final TextEditingController _passController = TextEditingController();
   //执行登录操作
-  _handleSignIn() {
+  _handleSignIn() async {
     if(!duIsEmail(_emailController.value.text)){
       toastInfo(msg:'请输入正确的邮件');
       return;
@@ -24,6 +27,13 @@ class _SignInPageState extends State<SignInPage> {
       toastInfo(msg:'密码不能小于六位');
       return;
     }
+    UserRequestEntity params = UserRequestEntity(
+      email:_emailController.value.text , 
+      password:duSHA256(_passController.value.text));
+      UserResponseEntity res =  await UserAPI.login(params:params);
+      print("initState:${new DateTime.now()}");
+      print(res);
+      print("initState:${new DateTime.now()}");
   }
   //跳转 注册界面
   _handleNavSignUp(){
