@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutternews/common/values/values.dart';
 
 /// 透明背景 AppBar
 Widget transparentAppBar({
   @required BuildContext context,
+  Widget title,
+  Widget leading,
   List<Widget> actions,
 }) {
   return AppBar(
-    backgroundColor: Colors.transparent,//背景透明
+    backgroundColor: Colors.transparent,
     elevation: 0,
-    title: Text(''),//无标题
-    leading: IconButton(
-      icon: Icon(
-        Icons.arrow_back,//左回退按钮
-        color: AppColors.primaryText,
-      ),
-      onPressed: () {
-        Navigator.pop(context);//左边回退按钮回到上一页
-      },
+    title: Center(
+      child: title,
     ),
-    actions: actions,//自定义右边按钮
+    leading: leading,
+    actions: actions,
   );
 }

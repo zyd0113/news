@@ -1,4 +1,4 @@
-
+import 'package:flutternews/pages/application/application.dart';
 import 'package:flutternews/pages/sign_in/sign_in.dart';
 import 'package:flutternews/pages/sign_up/sign_up.dart';
 
@@ -6,4 +6,5 @@ import 'package:flutternews/pages/sign_up/sign_up.dart';
 var staticRoutes = {
   '/sign-in':(context)=>SignInPage(),
   '/sign-up':(context)=>SignUpPage(),
+  '/app':(context) =>ApplicationPage(),
 };

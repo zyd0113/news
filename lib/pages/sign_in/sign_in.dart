@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutternews/common/api/apis.dart';
 import 'package:flutternews/common/api/user.dart';
+import 'package:flutternews/common/entity/categories.dart';
 import 'package:flutternews/common/entity/entitys.dart';
 import 'package:flutternews/common/utils/screen.dart';
 import 'package:flutternews/common/utils/security.dart';
 import 'package:flutternews/common/utils/utils.dart';
 import 'package:flutternews/common/values/values.dart';
 import 'package:flutternews/common/widgets/widgets.dart';
+import 'package:flutternews/global.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -19,21 +22,26 @@ class _SignInPageState extends State<SignInPage> {
   final TextEditingController _passController = TextEditingController();
   //执行登录操作
   _handleSignIn() async {
-    if(!duIsEmail(_emailController.value.text)){
-      toastInfo(msg:'请输入正确的邮件');
-      return;
-    }
-    if(!duCheckStringLength(_passController.value.text,6)){
-      toastInfo(msg:'密码不能小于六位');
-      return;
-    }
-    UserRequestEntity params = UserRequestEntity(
-      email:_emailController.value.text , 
-      password:duSHA256(_passController.value.text));
-      UserResponseEntity res =  await UserAPI.login(params:params);
-      print("initState:${new DateTime.now()}");
-      print(res);
-      print("initState:${new DateTime.now()}");
+    // if (!duIsEmail(_emailController.value.text)) {
+    //   toastInfo(msg: '请正确输入邮件');
+    //   return;
+    // }
+    // if (!duCheckStringLength(_passController.value.text, 6)) {
+    //   toastInfo(msg: '密码不能小于6位');
+    //   return;
+    // }
+
+    // UserLoginRequestEntity params = UserLoginRequestEntity(
+    //   email: _emailController.value.text,
+    //   password: duSHA256(_passController.value.text),
+    // );
+
+    // UserLoginResponseEntity userProfile = await UserAPI.login(params: params);
+    // Global.saveProfile(userProfile);
+
+    // List<NewsIndexResponseEntity> newsList = await NewsAPI.index();
+    // print(newsList.length);
+    Navigator.pushNamed(context, '/app');
   }
   //跳转 注册界面
   _handleNavSignUp(){
