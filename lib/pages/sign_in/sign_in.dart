@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutternews/common/api/apis.dart';
-import 'package:flutternews/common/api/user.dart';
-import 'package:flutternews/common/entity/categories.dart';
-import 'package:flutternews/common/entity/entitys.dart';
 import 'package:flutternews/common/utils/screen.dart';
-import 'package:flutternews/common/utils/security.dart';
 import 'package:flutternews/common/utils/utils.dart';
 import 'package:flutternews/common/values/values.dart';
 import 'package:flutternews/common/widgets/widgets.dart';
-import 'package:flutternews/global.dart';
 
 class SignInPage extends StatefulWidget {
   @override
