@@ -1,5 +1,5 @@
 //是否启用缓存
-const CACHE_ENABLE = true;
+const CACHE_ENABLE = false;
 //缓存的最长时间，时间（秒）
 const CACHE_MAXAGE = 1000;
 //最大缓存数

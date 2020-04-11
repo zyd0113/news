@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutternews/common/values/values.dart';
 import 'package:flutternews/common/utils/utils.dart';
 import 'package:flutternews/global.dart';
@@ -197,7 +198,7 @@ class HttpUtil {
   /// 读取本地配置
   Map<String, dynamic> getAuthorizationHeader() {
     var headers;
-    String accessToken = Global.profile.accessToken;
+    String accessToken = Global.profile?.accessToken;
     if (accessToken != null) {
       headers = {
         'Authorization': 'Bearer $accessToken',
@@ -244,7 +245,7 @@ class HttpUtil {
   }
 
   /// restful post 操作
-  Future post(String path, {dynamic params, Options options}) async {
+  Future post(String path, {dynamic params, Options options, BuildContext context}) async {
     Options requestOptions = options ?? Options();
     Map<String, dynamic> _authorization = getAuthorizationHeader();
     if (_authorization != null) {

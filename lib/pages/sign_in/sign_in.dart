@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutternews/common/api/apis.dart';
 import 'package:flutternews/common/utils/screen.dart';
 import 'package:flutternews/common/utils/utils.dart';
 import 'package:flutternews/common/values/values.dart';
 import 'package:flutternews/common/widgets/widgets.dart';
+import 'package:flutternews/global.dart';
+import 'package:flutternews/common/entity/entitys.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -25,13 +28,13 @@ class _SignInPageState extends State<SignInPage> {
     //   return;
     // }
 
-    // UserLoginRequestEntity params = UserLoginRequestEntity(
-    //   email: _emailController.value.text,
-    //   password: duSHA256(_passController.value.text),
-    // );
+    UserLoginRequestEntity params = UserLoginRequestEntity(
+      email: _emailController.value.text,
+      password: duSHA256(_passController.value.text),
+    );
 
-    // UserLoginResponseEntity userProfile = await UserAPI.login(params: params);
-    // Global.saveProfile(userProfile);
+    UserLoginResponseEntity userProfile = await UserAPI.login(params: params, context: context);
+    Global.saveProfile(userProfile);
 
     // List<NewsIndexResponseEntity> newsList = await NewsAPI.index();
     // print(newsList.length);

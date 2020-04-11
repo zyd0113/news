@@ -9,9 +9,14 @@ import 'common/values/values.dart';
 /// 全局配置
 class Global {
   /// 用户配置
-  static UserResponseEntity profile = UserResponseEntity(
+  static UserLoginResponseEntity profile = UserLoginResponseEntity(
     accessToken: null,
   );
+
+  //是否第一次打开
+  static bool isFirstOpen = false;
+  //是否离线登录
+  static bool isOffLineLogin = false;
 
   /// 是否 release
   static bool get isRelease => bool.fromEnvironment("dart.vm.product");
@@ -25,10 +30,17 @@ class Global {
     await StorageUtil.init();
     HttpUtil();
 
+    // 读取设备第一次打开
+  isFirstOpen = !StorageUtil().getBool(STORAGE_DEVICE_ALREADY_OPEN_KEY);
+  if (isFirstOpen) {
+    StorageUtil().setBool(STORAGE_DEVICE_ALREADY_OPEN_KEY, true);
+  }
+
     // 读取离线用户信息
     var _profileJSON = StorageUtil().getJSON(STORAGE_USER_PROFILE_KEY);
     if (_profileJSON != null) {
-      profile = UserResponseEntity.fromJson(_profileJSON);
+      profile = UserLoginResponseEntity.fromJson(_profileJSON);
+      isOffLineLogin = true;
     }
 
     // http 缓存
@@ -42,7 +54,7 @@ class Global {
   }
 
   // 持久化 用户信息
-  static Future<bool> saveProfile(UserResponseEntity userResponse) {
+  static Future<bool> saveProfile(UserLoginResponseEntity userResponse) {
     profile = userResponse;
     return StorageUtil()
         .setJSON(STORAGE_USER_PROFILE_KEY, userResponse.toJson());
