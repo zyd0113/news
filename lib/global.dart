@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutternews/common/entity/entitys.dart';
+import 'package:flutternews/common/provider/app.dart';
 import 'package:flutternews/common/utils/utils.dart';
 import 'common/values/values.dart';
 
@@ -17,6 +18,9 @@ class Global {
   static bool isFirstOpen = false;
   //是否离线登录
   static bool isOffLineLogin = false;
+  /// 应用状态
+static AppState appState = AppState();
+
 
   /// 是否 release
   static bool get isRelease => bool.fromEnvironment("dart.vm.product");

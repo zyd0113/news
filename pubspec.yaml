@@ -50,6 +50,9 @@ dependencies:
   #日期时间
   intl: ^0.16.1
 
+  #状态管理
+  provider: ^4.0.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -35,10 +35,22 @@ class _MainPageState extends State<MainPage> {
 
   // 读取所有数据
   _loadAllData() async {
-    _categories = await NewsAPI.categories();
-    _channels = await NewsAPI.channels();
-    _newsRecommend = await NewsAPI.newsRecommend();
-    _newsPageList = await NewsAPI.newsPageList();
+    _categories = await NewsAPI.categories(
+      context: context,
+      cacheDisk: true,
+    );
+    _channels = await NewsAPI.channels(
+      context: context,
+      cacheDisk: true,
+    );
+    _newsRecommend = await NewsAPI.newsRecommend(
+      context: context,
+      cacheDisk: true,
+    );
+    _newsPageList = await NewsAPI.newsPageList(
+      context: context,
+      cacheDisk: true,
+    );
 
     _selCategoryCode = _categories.first.code;
 

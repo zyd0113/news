@@ -15,8 +15,9 @@ Future deleteAuthentication() async {
   await StorageUtil().remove(STORAGE_USER_PROFILE_KEY);
   Global.profile = null;
 }
-//重新登录
+/// 重新登录
 Future goLoginPage(BuildContext context) async {
   await deleteAuthentication();
-  Navigator.pushNamedAndRemoveUntil(context,' /sign-in', (Route<dynamic> route) => false);
+  Navigator.pushNamedAndRemoveUntil(
+      context, "/sign-in", (Route<dynamic> route) => false);
 }
