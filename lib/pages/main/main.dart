@@ -1,15 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutternews/common/api/apis.dart';
 import 'package:flutternews/common/entity/categories.dart';
 import 'package:flutternews/common/entity/channels.dart';
 import 'package:flutternews/common/entity/news.dart';
 import 'package:flutternews/common/utils/utils.dart';
+import 'package:flutternews/common/values/values.dart';
+import 'package:flutternews/common/widgets/widgets.dart';
 import 'package:flutternews/pages/main/ad_widget.dart';
 import 'package:flutternews/pages/main/categories_widget.dart';
 import 'package:flutternews/pages/main/channels_widget.dart';
 import 'package:flutternews/pages/main/news_item.dart';
 import 'package:flutternews/pages/main/newsletter_widget.dart';
 import 'package:flutternews/pages/main/recommend_widget.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 
 class MainPage extends StatefulWidget {
@@ -20,6 +25,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  EasyRefreshController _controller; // EasyRefresh控制器
+
   NewsPageListResponseEntity _newsPageList; // 新闻翻页
   NewsRecommendResponseEntity _newsRecommend; // 新闻推荐
   List<CategoryResponseEntity> _categories; // 分类
@@ -30,7 +37,21 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    _controller = EasyRefreshController();
     _loadAllData();
+    _loadLatestWithDiskCache();
+  }
+
+  // 如果有磁盘缓存，延迟3秒拉取更新档案
+  _loadLatestWithDiskCache() {
+    if (CACHE_ENABLE == true) {
+      var cacheData = StorageUtil().getJSON(STORAGE_INDEX_NEWS_CACHE_KEY);
+      if (cacheData != null) {
+        Timer(Duration(seconds: 3), () {
+          _controller.callRefresh();
+        });
+      }
+    }
   }
 
   // 读取所有数据
@@ -59,6 +80,30 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  // 拉取推荐、新闻
+  _loadNewsData(
+    categoryCode, {
+    bool refresh = false,
+  }) async {
+    _selCategoryCode = categoryCode;
+    _newsRecommend = await NewsAPI.newsRecommend(
+      context: context,
+      params: NewsRecommendRequestEntity(categoryCode: categoryCode),
+      refresh: refresh,
+      cacheDisk: true,
+    );
+    _newsPageList = await NewsAPI.newsPageList(
+      context: context,
+      params: NewsPageListRequestEntity(categoryCode: categoryCode),
+      refresh: refresh,
+      cacheDisk: true,
+    );
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   // 分类菜单
   Widget _buildCategories() {
     return _categories == null
@@ -67,49 +112,16 @@ class _MainPageState extends State<MainPage> {
             categories: _categories,
             selCategoryCode: _selCategoryCode,
             onTap: (CategoryResponseEntity item) {
-              // _loadNewsData(item.code);
+              _loadNewsData(item.code);
             },
           );
   }
-  // 抽取前先实现业务
-  // Widget _buildCategories() {
-  //   return _categories == null
-  //       ? Container()
-  //       : SingleChildScrollView(
-  //           scrollDirection: Axis.horizontal,
-  //           child: Row(
-  //             children: _categories.map<Widget>((item) {
-  //               return Container(
-  //                 padding: EdgeInsets.symmetric(horizontal: 8),
-  //                 child: GestureDetector(
-  //                   child: Text(
-  //                     item.title,
-  //                     style: TextStyle(
-  //                       color: _selCategoryCode == item.code
-  //                           ? AppColors.secondaryElementText
-  //                           : AppColors.primaryText,
-  //                       fontSize: duSetFontSize(18),
-  //                       fontFamily: 'Montserrat',
-  //                       fontWeight: FontWeight.w600,
-  //                     ),
-  //                   ),
-  //                   onTap: () {
-  //                     setState(() {
-  //                       _selCategoryCode = item.code;
-  //                     });
-  //                   },
-  //                 ),
-  //               );
-  //             }).toList(),
-  //           ),
-  //         );
-  // }
 
   // 推荐阅读
   Widget _buildRecommend() {
-    return _newsRecommend == null //数据没到位，先用骨架图展示
-      ? Container()
-      : recommendWidget(_newsRecommend);
+    return _newsRecommend == null // 数据没到位，可以用骨架图展示
+        ? Container()
+        : recommendWidget(_newsRecommend);
   }
 
   // 频道
@@ -122,7 +134,8 @@ class _MainPageState extends State<MainPage> {
           );
   }
 
-Widget _buildNewsList() {
+  // 新闻列表
+  Widget _buildNewsList() {
     return _newsPageList == null
         ? Container(
             height: duSetHeight(161 * 5 + 100.0),
@@ -151,6 +164,8 @@ Widget _buildNewsList() {
             }).toList(),
           );
   }
+
+  // ad 广告条
   // 邮件订阅
   Widget _buildEmailSubscribe() {
     return newsletterWidget();
@@ -158,16 +173,34 @@ Widget _buildNewsList() {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          _buildCategories(),
-          _buildRecommend(),
-          _buildChannels(),
-          _buildNewsList(),
-          _buildEmailSubscribe(),
-        ],
-      ),
-    );
+    return _newsPageList == null
+        ? cardListSkeleton()
+        : EasyRefresh(
+            enableControlFinishRefresh: true,
+            controller: _controller,
+            header: ClassicalHeader(),
+            onRefresh: () async {
+              await _loadNewsData(
+                _selCategoryCode,
+                refresh: true,
+              );
+              _controller.finishRefresh();
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  _buildCategories(),
+                  Divider(height: 1),
+                  _buildRecommend(),
+                  Divider(height: 1),
+                  _buildChannels(),
+                  Divider(height: 1),
+                  _buildNewsList(),
+                  Divider(height: 1),
+                  _buildEmailSubscribe(),
+                ],
+              ),
+            ),
+          );
   }
 }
