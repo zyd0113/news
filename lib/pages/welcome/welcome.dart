@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutternews/common/router/router.gr.dart';
 import 'package:flutternews/common/utils/utils.dart';
 import 'package:flutternews/common/values/values.dart';
 
@@ -98,10 +100,7 @@ class _WelcomePageState extends State<WelcomePage> {
             borderRadius: Radii.k6pxRadius,
           ),
           onPressed: () {
-          Navigator.pushNamed(
-            context,
-            "/sign-in",
-          );
+            ExtendedNavigator.rootNavigator.pushNamed(Routes.signInPageRoute);
         },
         ),
       );
